@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>بهار | قائمة الجولات</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#C9A227">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بهار">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#17140F;
+    --panel:#221D15;
+    --panel-2:#2B2418;
+    --panel-3:#332B1C;
+    --border:#3B331F;
+    --gold:#C9A227;
+    --gold-light:#E7C766;
+    --cream:#F3ECDA;
+    --muted:#A99B7A;
+    --green:#4FAE7C;
+    --green-bg:rgba(79,174,124,.14);
+    --red:#DD6152;
+    --red-bg:rgba(221,97,82,.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Tajawal',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.brand-text h1{font-family:'Cairo',sans-serif;}
+  .app{max-width:760px;margin:0 auto;padding:18px 16px 40px;}
+
+  /* Topbar */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;background:linear-gradient(135deg,var(--panel-2),var(--panel));
+    border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:14px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:44px;height:44px;border-radius:12px;
+    background:linear-gradient(160deg,var(--gold-light),var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cairo',sans-serif;font-weight:800;font-size:20px;color:#1B160D;
+    flex:none;
+  }
+  .brand-text h1{font-size:19px;margin:0;color:var(--gold-light);letter-spacing:.5px;}
+  .brand-text span{font-size:12px;color:var(--muted);}
+  .clock{text-align:left;font-family:'Cairo',sans-serif;}
+  .clock #clockTime{display:block;font-size:20px;font-weight:700;color:var(--cream);}
+  .clock #clockDate{display:block;font-size:11px;color:var(--muted);}
+
+  /* Manager bar */
+  .manager-bar{
+    display:flex;align-items:center;gap:10px;
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:10px 14px;margin-bottom:14px;
+  }
+  .manager-bar label{font-size:13px;color:var(--muted);white-space:nowrap;}
+  .manager-bar input{
+    flex:1;background:var(--panel-3);border:1px solid var(--border);
+    color:var(--cream);border-radius:9px;padding:9px 12px;font-family:'Tajawal',sans-serif;font-size:14px;
+  }
+  .manager-bar input:focus{outline:1.5px solid var(--gold);}
+  .notif-chip{
+    flex:none;background:var(--panel-3);border:1px solid var(--border);color:var(--muted);
+    border-radius:9px;padding:9px 12px;font-size:12.5px;cursor:pointer;white-space:nowrap;
+    font-family:'Tajawal',sans-serif;
+  }
+  .notif-chip.on{background:rgba(79,174,124,.15);border-color:var(--green);color:var(--green);font-weight:700;}
+
+  /* Overview */
+  .overview{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-bottom:18px;
+  }
+  .overview-item{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:12px 20px;display:flex;align-items:baseline;gap:8px;flex:1;
+  }
+  .overview-item .num{font-family:'Cairo',sans-serif;font-size:26px;font-weight:800;color:var(--gold-light);}
+  .overview-item .lbl{font-size:12.5px;color:var(--muted);}
+  .ghost-btn{
+    background:transparent;border:1px solid var(--gold);color:var(--gold-light);
+    border-radius:10px;padding:12px 14px;font-family:'Tajawal',sans-serif;font-size:12.5px;
+    cursor:pointer;white-space:nowrap;
+  }
+  .ghost-btn:hover{background:rgba(201,162,39,.1);}
+  .btn-col{display:flex;flex-direction:column;gap:6px;align-items:stretch;}
+  .solid-btn{
+    background:linear-gradient(160deg,var(--gold-light),var(--gold));
+    border:none;color:#1B160D;border-radius:10px;padding:12px 16px;
+    font-family:'Cairo',sans-serif;font-weight:700;font-size:12.5px;
+    cursor:pointer;white-space:nowrap;
+  }
+  .solid-btn:disabled{opacity:.6;cursor:default;}
+  .solid-btn:hover:not(:disabled){filter:brightness(1.06);}
+  .last-upload{font-size:10.5px;color:var(--muted);text-align:center;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel-2);border:1px solid var(--gold);color:var(--cream);
+    padding:12px 20px;border-radius:12px;font-size:13.5px;opacity:0;
+    transition:all .25s ease;pointer-events:none;z-index:50;text-align:center;max-width:90%;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.err{border-color:var(--red);}
+
+  /* Section card */
+  .card{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:12px;overflow:hidden;
+  }
+  .card-head{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;
+    user-select:none;
+  }
+  .badge{
+    flex:none;width:52px;height:52px;border-radius:12px;
+    background:var(--panel-3);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    font-family:'Cairo',sans-serif;color:var(--gold-light);
+  }
+  .badge b{font-size:14px;line-height:1;font-weight:800;}
+  .badge small{font-size:9px;color:var(--muted);margin-top:2px;}
+  .card-title{flex:1;min-width:0;}
+  .card-title h3{margin:0 0 3px;font-size:16px;color:var(--cream);}
+  .card-title .sub{font-size:11.5px;color:var(--muted);}
+  .card-meta{display:flex;align-items:center;gap:10px;flex:none;}
+  .progress-ring{width:38px;height:38px;position:relative;flex:none;}
+  .progress-ring svg{transform:rotate(-90deg);}
+  .progress-ring circle{fill:none;stroke-width:4;}
+  .progress-ring .bg{stroke:var(--panel-3);}
+  .progress-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .3s;}
+  .progress-ring .txt{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--muted);font-family:'Cairo',sans-serif;
+  }
+  .chevron{transition:transform .2s;color:var(--muted);flex:none;}
+  .card.open .chevron{transform:rotate(180deg);}
+
+  .card-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .card.open .card-body{max-height:2000px;}
+  .card-body-inner{padding:0 16px 14px;border-top:1px solid var(--border);}
+
+  .subtabs{display:flex;gap:8px;margin:12px 0 6px;}
+  .subtab{
+    flex:1;text-align:center;padding:8px 6px;border-radius:9px;
+    background:var(--panel-3);border:1px solid var(--border);color:var(--muted);
+    font-size:13px;cursor:pointer;
+  }
+  .subtab.active{background:rgba(201,162,39,.15);border-color:var(--gold);color:var(--gold-light);font-weight:700;}
+
+  .round-info{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--panel-3);border:1px solid var(--border);border-radius:9px;
+    padding:8px 12px;margin:12px 0;font-size:12.5px;color:var(--muted);
+  }
+  .round-info .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  .task-list{list-style:none;margin:8px 0 4px;padding:0;}
+  .task{
+    display:flex;align-items:flex-start;gap:10px;padding:10px 6px;
+    border-bottom:1px dashed var(--border);
+  }
+  .task:last-child{border-bottom:none;}
+  .task .check{
+    flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--gold);
+    margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    background:transparent;
+  }
+  .task.done .check{background:var(--green);border-color:var(--green);}
+  .task .check svg{width:13px;height:13px;display:none;}
+  .task.done .check svg{display:block;}
+  .task-txt{flex:1;font-size:14px;line-height:1.5;}
+  .task.done .task-txt .main{color:var(--muted);text-decoration:line-through;}
+  .task-txt .main{display:block;color:var(--cream);}
+  .task-txt .meta{display:block;font-size:11px;color:var(--green);margin-top:2px;}
+  .task .del{
+    flex:none;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;
+    padding:2px 4px;line-height:1;
+  }
+  .task .del:hover{color:var(--red);}
+  .task .note-btn{
+    flex:none;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;
+    padding:2px 4px;line-height:1;
+  }
+  .task .note-btn.has-note{color:var(--gold-light);}
+  .task .note-btn:hover{color:var(--gold-light);}
+  .task-note{
+    display:flex;align-items:flex-start;gap:5px;margin-top:5px;
+    font-size:12px;color:var(--gold-light);background:rgba(201,162,39,.08);
+    border-radius:7px;padding:6px 9px;line-height:1.5;
+  }
+
+  .add-row{display:flex;gap:8px;margin-top:10px;}
+  .add-row input{
+    flex:1;background:var(--panel-3);border:1px solid var(--border);color:var(--cream);
+    border-radius:9px;padding:9px 12px;font-family:'Tajawal',sans-serif;font-size:13.5px;
+  }
+  .add-row button{
+    background:var(--gold);border:none;color:#1B160D;border-radius:9px;
+    padding:0 16px;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer;
+  }
+
+  footer{text-align:center;color:var(--muted);font-size:11.5px;margin-top:20px;}
+
+  @media print{
+    body{background:#fff;color:#000;}
+    .manager-bar input,.ghost-btn,.add-row,.task .del,.chevron{display:none!important;}
+    .card-body{max-height:none!important;}
+    .card{border:1px solid #999;break-inside:avoid;}
+    .badge,.progress-ring{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">ب</div>
+      <div class="brand-text">
+        <h1>بهار</h1>
+        <span>قائمة مهام الجولات اليومية</span>
+      </div>
+    </div>
+    <div class="clock">
+      <span id="clockTime">--:--</span>
+      <span id="clockDate">--</span>
+    </div>
+  </div>
+
+  <div class="manager-bar">
+    <label>اسم المسؤول عن الجولة</label>
+    <input id="managerName" placeholder="اكتب اسمك هنا">
+    <button class="notif-chip" id="notifBtn">🔔 فعّل التنبيهات</button>
+  </div>
+
+  <div class="overview">
+    <div class="overview-item">
+      <span class="num" id="pendingNow">0</span>
+      <span class="lbl">مهمة متبقية بالجولة الحالية</span>
+    </div>
+    <div class="btn-col">
+      <button class="solid-btn" id="uploadBtn">📤 رفع التقرير</button>
+      <button class="ghost-btn" id="printBtn">🖨 طباعة تقرير اليوم</button>
+      <span class="last-upload" id="lastUpload"></span>
+    </div>
+  </div>
+
+  <main id="sections"></main>
+
+  <footer>قائمة مهام بهار — يتم حفظ الإنجاز تلقائيًا على هذا الجهاز</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ إعداد المهام (قابلة للتعديل من الواجهة) ============ */
+const DEFAULT_SECTIONS = [
+  { id:'half_hour', title:'كل نصف ساعة', badge:'٣٠', badgeUnit:'دقيقة', type:'slot', slotMin:30,
+    tasks:['تفقد حمامات النساء والرجال (الارضي والاول)','تفقد المدخل','تفقد السبلتات وأحمالها ومستوى الكاز'] },
+  { id:'hour', title:'كل ساعة', badge:'١', badgeUnit:'ساعة', type:'slot', slotMin:60,
+    tasks:['تفقد الطاولات','تفقد الكتلري','تفقد الكراسي'] },
+  { id:'two_hours', title:'كل ساعتين', badge:'٢', badgeUnit:'ساعة', type:'slot', slotMin:120,
+    tasks:['تفقد أرضية الطابق الارضي والاول (المطبخ، الممر، المصاعد، المصعد الخدمي)','تفقد نظافة الزجاج بصورة عامة','تفقد غرفة الموظفين','متابعة اعمال الصيانة','التأكد من عرض الشاشات'] },
+  { id:'twice', title:'وقتين باليوم', badge:'٢', badgeUnit:'مرات', type:'twice', subtabs:['الفطار','الغداء'],
+    tasks:['تذوق الوجبات (الفطار والغداء)','تفقد حوض الشلال','التأكد من سلامة المطبخ والصالة','تفقد درجة حرارة البرادات (المطبخ والصالة)','تفقد نظافة الصحون الموجودة بالسنك والمطبخ','تفقد نظافة بار الارضي والاول'] },
+  { id:'daily', title:'يومي', badge:'١', badgeUnit:'يوم', type:'day',
+    tasks:['تفقد الفرع بشكل عام','تفقد السطح','تفقد الكامرات'] },
+  { id:'weekly', title:'اسبوعي', badge:'١', badgeUnit:'اسبوع', type:'week',
+    tasks:['ترتيب وتنظيم غرفة الصيانة','جرد للصالة ومعداتها','جرد المطبخ والمعدات','فلاتر السبلتات والبرادات'] },
+  { id:'monthly', title:'شهري', badge:'١', badgeUnit:'شهر', type:'month',
+    tasks:['جرد للصحون'] },
+];
+
+/* ضع هنا رابط الـ Web App بعد نشر كود Google Apps Script (خطوات النشر بالأسفل) */
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwqwRiqe-nDcJ8TyTLFjRlYzfoNunEFK0oMQqb-flEgafiwqRiQEeMgzeuVmwje5g1sNw/exec'
+};
+
+const STORE_KEY = 'bahar_checklist_state_v1';
+
+function loadState(){
+  const defaults = { managerName:'', customTasks:{}, done:{}, openCards:{}, activeSubtab:{}, lastUploadAt:null, notificationsEnabled:false, lastSeenSlot:{}, notes:{} };
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw) || {};
+      // ندمج القيم القديمة المحفوظة مع الحقول الافتراضية الجديدة، حتى لو
+      // كانت محفوظة من نسخة أقدم من التطبيق ما فيها هذي الحقول أصلًا
+      return Object.assign({}, defaults, parsed, {
+        customTasks: parsed.customTasks || {},
+        done: parsed.done || {},
+        openCards: parsed.openCards || {},
+        activeSubtab: parsed.activeSubtab || {},
+        lastSeenSlot: parsed.lastSeenSlot || {},
+        notes: parsed.notes || {}
+      });
+    }
+  }catch(e){}
+  return defaults;
+}
+let state = loadState();
+function saveState(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }catch(e){
+    // بعض المتصفحات (خصوصًا فتح الملف مباشرة من الجهاز، أو متصفح داخلي بتطبيق تانه)
+    // يمنعون التخزين المحلي. نتجاهل الخطأ حتى لا يوقف عرض المهام، ويستمر التطبيق
+    // بالعمل بالجلسة الحالية بدون حفظ دائم.
+    console.warn('تعذر الحفظ المحلي:', e);
+  }
+}
+
+function tasksFor(section){
+  return state.customTasks[section.id] || section.tasks;
+}
+
+/* ============ وقت/جولات ============ */
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+
+function isoWeek(d){
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+}
+
+function periodKey(section, now){
+  const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+  const dayStr = `${y}-${pad(m)}-${pad(d)}`;
+  if(section.type === 'month') return `${y}-${pad(m)}`;
+  if(section.type === 'week') return `${y}-W${isoWeek(now)}`;
+  if(section.type === 'day') return dayStr;
+  if(section.type === 'twice'){
+    const sub = state.activeSubtab[section.id] || 0;
+    return `${dayStr}-sub${sub}`;
+  }
+  if(section.type === 'slot'){
+    const minutesSinceMidnight = now.getHours()*60 + now.getMinutes();
+    const slotIdx = Math.floor(minutesSinceMidnight / section.slotMin);
+    return `${dayStr}-s${slotIdx}`;
+  }
+  return dayStr;
+}
+
+function slotLabel(section, now){
+  const minutesSinceMidnight = now.getHours()*60 + now.getMinutes();
+  const slotIdx = Math.floor(minutesSinceMidnight / section.slotMin);
+  const startMin = slotIdx * section.slotMin;
+  const endMin = startMin + section.slotMin;
+  const fmt = (mins)=>{
+    let h = Math.floor(mins/60) % 24, mi = mins % 60;
+    return `${pad(h)}:${pad(mi)}`;
+  };
+  return `${fmt(startMin)} - ${fmt(endMin)}`;
+}
+
+/* ============ رسم الواجهة ============ */
+const sectionsEl = document.getElementById('sections');
+
+function getNote(sectionId, key, idx){
+  return (state.notes[sectionId] && state.notes[sectionId][key] && state.notes[sectionId][key][idx]) || '';
+}
+
+function setNote(sectionId, key, idx, text){
+  if(!state.notes[sectionId]) state.notes[sectionId] = {};
+  if(!state.notes[sectionId][key]) state.notes[sectionId][key] = {};
+  const trimmed = (text || '').trim();
+  if(trimmed){
+    state.notes[sectionId][key][idx] = trimmed;
+  }else{
+    delete state.notes[sectionId][key][idx];
+  }
+  saveState();
+}
+
+function renderInner(){
+  const now = new Date();
+  checkOverdueRounds(now);
+  document.getElementById('clockTime').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  document.getElementById('clockDate').textContent = now.toLocaleDateString('ar-IQ', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('managerName').value = state.managerName || '';
+
+  sectionsEl.innerHTML = '';
+  let totalPending = 0;
+
+  DEFAULT_SECTIONS.forEach(section=>{
+    const key = periodKey(section, now);
+    const doneMap = state.done[section.id] && state.done[section.id][key] || {};
+    const list = tasksFor(section);
+    const doneCount = list.filter((_,i)=>doneMap[i] && doneMap[i].done).length;
+    const pending = list.length - doneCount;
+    totalPending += pending;
+
+    const card = document.createElement('section');
+    card.className = 'card' + (state.openCards[section.id] ? ' open' : '');
+
+    const pct = list.length ? Math.round((doneCount/list.length)*100) : 0;
+    const circumference = 2*Math.PI*15;
+    const offset = circumference - (pct/100)*circumference;
+
+    const head = document.createElement('div');
+    head.className = 'card-head';
+    head.innerHTML = `
+      <div class="badge"><b>${section.badge}</b><small>${section.badgeUnit}</small></div>
+      <div class="card-title">
+        <h3>${section.title}</h3>
+        <div class="sub">${sectionSubtitle(section, now)}</div>
+      </div>
+      <div class="card-meta">
+        <div class="progress-ring">
+          <svg width="38" height="38">
+            <circle class="bg" cx="19" cy="19" r="15"></circle>
+            <circle class="fg" cx="19" cy="19" r="15" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+          </svg>
+          <div class="txt">${doneCount}/${list.length}</div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    `;
+    head.addEventListener('click', ()=>{
+      state.openCards[section.id] = !state.openCards[section.id];
+      saveState(); render();
+    });
+    card.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const inner = document.createElement('div');
+    inner.className = 'card-body-inner';
+
+    if(section.type === 'twice'){
+      const subWrap = document.createElement('div');
+      subWrap.className = 'subtabs';
+      section.subtabs.forEach((label, idx)=>{
+        const t = document.createElement('div');
+        t.className = 'subtab' + ((state.activeSubtab[section.id]||0) === idx ? ' active' : '');
+        t.textContent = label;
+        t.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          state.activeSubtab[section.id] = idx;
+          saveState(); render();
+        });
+        subWrap.appendChild(t);
+      });
+      inner.appendChild(subWrap);
+    }
+
+    if(section.type === 'slot'){
+      const info = document.createElement('div');
+      info.className = 'round-info';
+      info.innerHTML = `<span><span class="dot"></span>الجولة الحالية: ${slotLabel(section, now)}</span><span>تتصفر تلقائيًا بالجولة القادمة</span>`;
+      inner.appendChild(info);
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'task-list';
+    list.forEach((taskText, idx)=>{
+      const rec = doneMap[idx];
+      const note = getNote(section.id, key, idx);
+      const li = document.createElement('li');
+      li.className = 'task' + (rec && rec.done ? ' done' : '');
+      li.innerHTML = `
+        <button class="check" aria-label="تم">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#12100B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="task-txt">
+          <span class="main">${taskText}</span>
+          ${rec && rec.done ? `<span class="meta">✔ ${rec.by || 'بدون اسم'} — ${rec.time}</span>` : ''}
+          ${note ? `<div class="task-note">📝 <span>${note}</span></div>` : ''}
+        </div>
+        <button class="note-btn${note ? ' has-note' : ''}" title="إضافة/تعديل ملاحظة">🗒️</button>
+        <button class="del" title="حذف المهمة">✕</button>
+      `;
+      li.querySelector('.check').addEventListener('click', ()=>{
+        toggleTask(section, key, idx);
+      });
+      li.querySelector('.note-btn').addEventListener('click', ()=>{
+        const current = getNote(section.id, key, idx);
+        const val = prompt('اكتب ملاحظة لهذه المهمة (اتركها فاضية لحذف الملاحظة):', current);
+        if(val === null) return; // ضغط إلغاء
+        setNote(section.id, key, idx, val);
+        render();
+      });
+      li.querySelector('.del').addEventListener('click', ()=>{
+        if(confirm('حذف هذه المهمة نهائيًا من القسم؟')) removeTask(section, idx);
+      });
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.innerHTML = `<input type="text" placeholder="+ إضافة مهمة جديدة لهذا القسم"><button>إضافة</button>`;
+    const addInput = addRow.querySelector('input');
+    const addBtn = addRow.querySelector('button');
+    const doAdd = ()=>{
+      const v = addInput.value.trim();
+      if(!v) return;
+      const arr = state.customTasks[section.id] ? state.customTasks[section.id].slice() : section.tasks.slice();
+      arr.push(v);
+      state.customTasks[section.id] = arr;
+      saveState(); render();
+    };
+    addBtn.addEventListener('click', doAdd);
+    addInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') doAdd(); });
+    inner.appendChild(addRow);
+
+    body.appendChild(inner);
+    card.appendChild(body);
+    sectionsEl.appendChild(card);
+  });
+
+  document.getElementById('pendingNow').textContent = totalPending;
+}
+
+// غلاف آمن: لو صار أي خطأ غير متوقع بالعرض، نظهر رسالة بدل ما تضل الصفحة فاضية
+function render(){
+  try{
+    renderInner();
+  }catch(err){
+    console.error('خطأ بعرض القائمة:', err);
+    sectionsEl.innerHTML = `<div style="padding:18px;border:1px solid var(--red);border-radius:12px;color:var(--red);font-size:13px;">
+      صار خطأ بعرض المهام. جرب تحدث الصفحة (Refresh). إذا استمرت المشكلة أرسل هذا النص لمن يطورلك التطبيق:<br>
+      <code style="direction:ltr;display:block;margin-top:6px;">${(err && err.message) ? err.message : err}</code>
+    </div>`;
+  }
+}
+
+function sectionSubtitle(section, now){
+  if(section.type === 'month') return 'تتصفر أول كل شهر';
+  if(section.type === 'week') return 'تتصفر أول كل اسبوع';
+  if(section.type === 'day') return 'تتصفر أول كل يوم';
+  if(section.type === 'twice') return 'تُنجز مرتين باليوم — اختر الوقت أدناه';
+  if(section.type === 'slot') return `تتكرر كل ${section.badge} ${section.badgeUnit}`;
+  return '';
+}
+
+function toggleTask(section, key, idx){
+  if(!state.done[section.id]) state.done[section.id] = {};
+  if(!state.done[section.id][key]) state.done[section.id][key] = {};
+  const cur = state.done[section.id][key][idx];
+  const now = new Date();
+  if(cur && cur.done){
+    delete state.done[section.id][key][idx];
+  }else{
+    state.done[section.id][key][idx] = {
+      done:true,
+      by: state.managerName || '',
+      time: `${pad(now.getHours())}:${pad(now.getMinutes())}`
+    };
+  }
+  saveState(); render();
+}
+
+function removeTask(section, idx){
+  const arr = (state.customTasks[section.id] ? state.customTasks[section.id].slice() : section.tasks.slice());
+  arr.splice(idx,1);
+  state.customTasks[section.id] = arr;
+  saveState(); render();
+}
+
+document.getElementById('managerName').addEventListener('input', (e)=>{
+  state.managerName = e.target.value;
+  saveState();
+});
+
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  window.print();
+});
+
+/* ============ رفع التقرير (Google Sheet + تلكرام) ============ */
+const PERIOD_LABELS = { month:'شهري', week:'اسبوعي', day:'يومي', twice:'وقتين باليوم', slot:'دوري' };
+
+function buildReportRows(){
+  const now = new Date();
+  const rows = [];
+  DEFAULT_SECTIONS.forEach(section=>{
+    const key = periodKey(section, now);
+    const doneMap = (state.done[section.id] && state.done[section.id][key]) || {};
+    const list = tasksFor(section);
+    let periodLabel = PERIOD_LABELS[section.type] || section.title;
+    if(section.type === 'twice'){
+      const subIdx = state.activeSubtab[section.id] || 0;
+      periodLabel = section.subtabs[subIdx];
+    }else if(section.type === 'slot'){
+      periodLabel = `${section.title} (${slotLabel(section, now)})`;
+    }
+    list.forEach((taskText, idx)=>{
+      const rec = doneMap[idx];
+      rows.push({
+        section: section.title,
+        period: periodLabel,
+        task: taskText,
+        status: (rec && rec.done) ? 'منجزة' : 'متبقية',
+        by: (rec && rec.done) ? (rec.by || '') : '',
+        doneTime: (rec && rec.done) ? rec.time : '',
+        note: getNote(section.id, key, idx)
+      });
+    });
+  });
+  return rows;
+}
+
+function showToast(msg, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=>{ t.className = 'toast'; }, 3800);
+}
+
+function updateLastUploadLabel(){
+  const el = document.getElementById('lastUpload');
+  if(!el) return;
+  el.textContent = state.lastUploadAt ? `آخر رفع: ${state.lastUploadAt}` : '';
+}
+
+function submitReport(){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf('PASTE_YOUR') === 0){
+    showToast('لازم أول تحط رابط Google Apps Script بإعدادات الملف (CONFIG.SCRIPT_URL)', true);
+    return;
+  }
+  if(!state.managerName || !state.managerName.trim()){
+    showToast('اكتب اسمك بخانة "المسؤول عن الجولة" قبل رفع التقرير', true);
+    return;
+  }
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  btn.textContent = '... جاري الرفع';
+
+  const now = new Date();
+  const payload = {
+    managerName: state.managerName,
+    reportDate: `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`,
+    reportTime: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+    rows: buildReportRows()
+  };
+
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // يتجنب تعقيد CORS مع Apps Script
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data=>{
+    if(data && data.status === 'ok'){
+      state.lastUploadAt = `${payload.reportDate} ${payload.reportTime}`;
+      saveState();
+      updateLastUploadLabel();
+      if(data.telegram && data.telegram.ok === false){
+        showToast('✅ انرفع التقرير بالشيت، بس التلكرام ما وصل: ' + (data.telegram.description || 'خطأ غير معروف'), true);
+      }else{
+        showToast('✅ تم رفع التقرير للشيت وإرسال الملخص بالتلكرام');
+      }
+    }else{
+      showToast('صار خطأ بالرفع: ' + (data && data.message ? data.message : 'غير معروف'), true);
+    }
+  })
+  .catch(err=>{
+    showToast('تعذر الاتصال بالسيرفر — تأكد من رابط Apps Script والانترنت', true);
+  })
+  .finally(()=>{
+    btn.disabled = false;
+    btn.textContent = '📤 رفع التقرير';
+  });
+}
+
+document.getElementById('uploadBtn').addEventListener('click', submitReport);
+
+/* ============ التنبيهات (فاتت الجولة ولم تنجز) ============ */
+const notifBtn = document.getElementById('notifBtn');
+
+// يظهر إشعار عن طريق الـ Service Worker إذا مسجل (أوثق خصوصًا لو التطبيق مثبت
+// كأيقونة)، وإلا يرجع لإشعار الصفحة العادي
+function showAppNotification(title, options){
+  if(navigator.serviceWorker && navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({ type:'SHOW_NOTIFICATION', title, options });
+  }else{
+    try{ new Notification(title, options); }catch(e){}
+  }
+}
+
+function updateNotifBtn(){
+  const supported = 'Notification' in window;
+  if(!supported){
+    notifBtn.textContent = '🔕 المتصفح لا يدعم التنبيهات';
+    notifBtn.classList.remove('on');
+    return;
+  }
+  if(Notification.permission === 'granted' && state.notificationsEnabled){
+    notifBtn.textContent = '🔔 التنبيهات مفعّلة';
+    notifBtn.classList.add('on');
+  }else{
+    notifBtn.textContent = '🔔 فعّل التنبيهات';
+    notifBtn.classList.remove('on');
+  }
+}
+
+notifBtn.addEventListener('click', ()=>{
+  if(!('Notification' in window)){
+    showToast('هذا المتصفح لا يدعم إشعارات النظام، بس راح يوصلك تنبيه بالتلكرام إذا مربوط', true);
+    return;
+  }
+  Notification.requestPermission().then(perm=>{
+    state.notificationsEnabled = (perm === 'granted');
+    saveState();
+    updateNotifBtn();
+    if(perm === 'granted'){
+      showAppNotification('بهار — تفعيل التنبيهات', { body:'راح تنوصلك رسالة كل ما تفوت جولة بدون إنجاز' });
+      showToast('تم تفعيل التنبيهات ✅');
+    }else{
+      showToast('ما تم تفعيل التنبيهات — الصلاحية مرفوضة من إعدادات المتصفح', true);
+    }
+  });
+});
+
+function beepAndVibrate(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.35);
+  }catch(e){}
+  if(navigator.vibrate) navigator.vibrate([250,120,250]);
+}
+
+// يتفحص أقسام الجولات (نص ساعة / ساعة / ساعتين) كل ما تتغير الجولة الحالية،
+// وإذا الجولة اللي خلصت ما تحققت بالكامل يرسل تنبيه محلي + تلكرام
+function checkOverdueRounds(now){
+  DEFAULT_SECTIONS.filter(s=>s.type === 'slot').forEach(section=>{
+    const currentKey = periodKey(section, now);
+    const prevKey = state.lastSeenSlot[section.id];
+
+    if(prevKey && prevKey !== currentKey){
+      const doneMap = (state.done[section.id] && state.done[section.id][prevKey]) || {};
+      const list = tasksFor(section);
+      const missed = list.filter((_,i)=> !(doneMap[i] && doneMap[i].done));
+      if(missed.length){
+        const title = `⏰ فاتت جولة: ${section.title}`;
+        const body = `ما تحقق ${missed.length} من ${list.length} — ${missed[0]}${missed.length>1 ? ' ...' : ''}`;
+        if(state.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted'){
+          showAppNotification(title, { body, tag:'bahar-'+section.id });
+        }
+        beepAndVibrate();
+        sendMissedAlert(section, missed, list.length);
+      }
+    }
+    state.lastSeenSlot[section.id] = currentKey;
+  });
+  saveState();
+}
+
+function sendMissedAlert(section, missedTasks, totalTasks){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf('PASTE_YOUR') === 0) return;
+  const now = new Date();
+  const payload = {
+    action: 'alert',
+    managerName: state.managerName || '',
+    reportDate: `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`,
+    reportTime: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+    section: section.title,
+    totalTasks: totalTasks,
+    missedTasks: missedTasks
+  };
+  fetch(CONFIG.SCRIPT_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).catch(()=>{ /* تنبيه صامت بدون إزعاج المستخدم إذا فشل الاتصال */ });
+}
+
+render();
+updateLastUploadLabel();
+updateNotifBtn();
+setInterval(render, 30000); // تحديث الساعة والجولات كل ٣٠ ثانية
+
+// تسجيل الـ Service Worker (يحتاج استضافة حقيقية https، ما يشتغل من ملف محلي)
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
